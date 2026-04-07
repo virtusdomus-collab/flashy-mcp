@@ -24,7 +24,7 @@ def flashy_get_account() -> str:
 
 @mcp.tool()
 def flashy_list_contacts(limit: int = 50, page: int = 1) -> str:
-    """List contacts from Flashy"""
+    """List contacts in Flashy"""
     return json.dumps(req("GET", "/contacts", params={"limit": limit, "page": page}))
 
 @mcp.tool()
@@ -59,7 +59,7 @@ def flashy_update_contact(contact_id: str, first_name: str = "", last_name: str 
 @mcp.tool()
 def flashy_search_contacts(query: str, limit: int = 50) -> str:
     """Search contacts in Flashy"""
-    return json.dumps(req("GET", "/contacts/search", params={"q": query, "limit": limit}))
+    return json.dumps(req("GET", "/contacts", params={"search": query, "limit": limit}))
 
 @mcp.tool()
 def flashy_list_lists() -> str:
@@ -83,12 +83,12 @@ def flashy_remove_contact_from_list(list_id: str, contact_id: str) -> str:
 
 @mcp.tool()
 def flashy_list_messages(limit: int = 50) -> str:
-    """List campaigns/messages in Flashy"""
+    """List messages/campaigns in Flashy"""
     return json.dumps(req("GET", "/messages", params={"limit": limit}))
 
 @mcp.tool()
 def flashy_get_message(message_id: str) -> str:
-    """Get a specific message/campaign by ID"""
+    """Get a specific message by ID"""
     return json.dumps(req("GET", f"/messages/{message_id}"))
 
 @mcp.tool()
@@ -103,4 +103,4 @@ def flashy_get_reports(limit: int = 20) -> str:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
+    mcp.run(transport="streamable-http", port=port)
