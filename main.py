@@ -1,20 +1,20 @@
 import os
 import json
 import httpx
-from mcp.server.fastmcp import FastMCP
-
+from mcp.server import MCPServer
+from mcp.server.transport_security import TransportSecuritySettings
 FLASHY_API_KEY = os.environ.get("FLASHY_API_KEY", "")
 BASE_URL = "https://api.flashy.app"
 
-mcp = FastMCP("flashy-mcp", enable_dns_rebinding_protection=False)
+mcp = MCPServer("flashy-mcp")
 def req(method: str, endpoint: str, params=None, body=None):
-    headers = {"x-api-key": FLASHY_API_KEY, "Content-Type": "application/json", "Accept": "application/json"}
-    with httpx.Client(timeout=30) as client:
-        r = client.request(method, f"{BASE_URL}{endpoint}", headers=headers, params=params, json=body)
-        try:
-            return r.json()
-        except Exception:
-            return {"status_code": r.status_code, "text": r.text}
+        headers = {"x-api-key": FLASHY_API_KEY, "Content-Type": "application/json", "Accept": "application/json"}
+        with httpx.Client(timeout=30) as client:
+            r = client.request(method, f"{BASE_URL}{endpoint}", headers=headers, params=params, json=body)
+            try:
+                return r.json()
+            except Exception:
+                return {"status_code": r.status_code, "text": r.text}
 
 @mcp.tool()
 def flashy_get_account() -> str:
@@ -102,6 +102,9 @@ def flashy_get_reports(limit: int = 20) -> str:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    mcp.settings.host = "0.0.0.0"
-    mcp.settings.port = port
-    mcp.run(transport="streamable-http")
+    mcp.run(
+        transport="streamable-http",
+        host="0.0.0.0",
+        port=port,
+        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False)
+    )
