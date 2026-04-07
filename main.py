@@ -6,8 +6,7 @@ from mcp.server.fastmcp import FastMCP
 FLASHY_API_KEY = os.environ.get("FLASHY_API_KEY", "")
 BASE_URL = "https://api.flashy.app"
 
-mcp = FastMCP("flashy-mcp")
-
+mcp = FastMCP("flashy-mcp", enable_dns_rebinding_protection=False)
 def req(method: str, endpoint: str, params=None, body=None):
     headers = {"x-api-key": FLASHY_API_KEY, "Content-Type": "application/json", "Accept": "application/json"}
     with httpx.Client(timeout=30) as client:
